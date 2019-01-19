@@ -19,7 +19,7 @@ def getTeamInfo(driver):
 def getPoke(driver):
 	poke = Pokemon()
 	elem = driver.find_element_by_xpath('//div[@class="tooltip"]/h2')
-	poke.name = elem.text.split()[0]
+	poke.name = elem.text.split()[0:-1]
 	poke.level = elem.text.split()[-1][1:]
 
 	elem = driver.find_element_by_xpath('//div[@class="tooltip"]/h2/img[1]')

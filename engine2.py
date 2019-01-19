@@ -10,7 +10,7 @@ from infoFunctions import getTeamInfo
 # 1: passive
 # 2: challenge
 # 3: matchmaking
-mode = 1
+mode = 2
 player = "BottyGurl"
 username = ""
 if mode == 2:
