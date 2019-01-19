@@ -10,7 +10,7 @@ from infoFunctions import getTeamInfo
 # 1: passive
 # 2: challenge
 # 3: matchmaking
-mode = 1
+mode = 3
 player = "BottyGurl"
 username = ""
 if mode == 2:
@@ -31,7 +31,6 @@ class Engine:
 		if mode == 1:
 			while True:
 				self.acceptMatch(driver)
-				print('huh')
 		elif mode == 2:
 			while True:
 				self.challengePlayer(driver, player)
@@ -108,7 +107,7 @@ class Engine:
 		worked = False
 		while not worked:
 			try:
-				WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, '//span[@data-name=" BottyBoy"]')))
+				WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, '//span[@data-name=" '+username+'"]')))
 				worked = True
 			except:
 				pass
