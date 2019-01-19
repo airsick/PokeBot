@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
+from infoFunctions import getTeamInfo
+
 class Engine:
 	def __init__(self):
 		pass
@@ -51,11 +53,9 @@ class Engine:
 				worked = True
 			except:
 				pass
-		ActionChains(driver).move_to_element(driver.find_element_by_name('chooseSwitch')).perform()
 
-		# print messages
-		for entry in driver.get_log('browser'):
-			print(entry)
+		myTeam = getTeamInfo(driver)
+
 if __name__ == '__main__':
 	bot = Engine()
 	bot.main()
