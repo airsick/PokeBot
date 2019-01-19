@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from infoFunctions import getTeamInfo
+from infoFunctions import getTeamInfo, getGameState
 
 # 1: passive
 # 2: challenge
@@ -121,8 +121,7 @@ class Engine:
 				worked = True
 			except:
 				pass
-
-		myTeam = getTeamInfo(driver)
+		gamestate = getGameState(driver)
 		driver.find_element_by_xpath('//button[@name="chooseMove"][@value=1]').click()
 		while True:
 			inc = False

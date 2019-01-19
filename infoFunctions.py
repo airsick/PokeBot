@@ -15,6 +15,7 @@ def getTeamInfo(driver):
 	for i in range(1,6):
 		ActionChains(driver).move_to_element(driver.find_element_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(i))).perform()
 		team.pokemon.append(getPoke(driver))
+	return team
 
 def getPoke(driver):
 	poke = Pokemon()
@@ -37,9 +38,29 @@ def getPoke(driver):
 		poke.types.append(elem.get_property("alt"))
 	except:
 		pass
-	print(poke.name)
-	print(poke.level)
-	print(poke.types)
 	return poke
 
+def getOpponent(driver):
+	ActionChains(driver).move_to_element(driver.find_element_by_xpath('//div[@class="foehint"]/div[3]')).perform()
+	return getPoke(driver)
+
+def getMoves(driver):
+	moves = []
+	for i in range(1,5):
+		moveName = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("data-move")
+		moveType = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("class")[5:]
+		ActionChains(driver).move_to_element(driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i))).perform()
+		movePower = driver.find_element_by_xpath('//div[@class="tooltip"]/p[1]').text.split()[-1]
+		if movePower == "—":
+			movePower = 0
+		moves.append({'name':moveName, 'type':moveType, 'power':movePower})
+	return moves
+
+def getGameState(driver):
+	gamestate = {}
+	gamestate['team'] = getTeamInfo(driver)
+	gamestate['opponent'] = getOpponent(driver)
+	gamestate['team'].pokemon[0].moves = getMoves(driver)
+
+#def buildFeatures(gamestate):
 
