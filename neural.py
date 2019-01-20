@@ -38,11 +38,15 @@ class NeuralNetwork(object):
 
 
   def backward(self, y ):
+    self.reverse = np.array((X),dtype=float)
     # backward propgate through the network
+    print(y)
     self.o_error = y - self.o  # error in output
+    print(self.o_error)
     self.o_delta = self.o_error * self.sigmoidPrime(self.o)  # applying derivative of sigmoid to error
 
     self.z4_error = self.o_delta.dot( self.W3.T)  # z2 error: how much our hidden layer weights contributed to output error
+    print(self.z4_error)
     self.z4_delta = self.z4_error * self.sigmoidPrime(self.z4)  # applying derivative of sigmoid to z2 error
 
     self.z2_error = self.o_delta.dot(self.W2.T)  # z2 error: how much our hidden layer weights contributed to output error

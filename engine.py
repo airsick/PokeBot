@@ -140,8 +140,7 @@ class Engine:
 				self.hp = int(driver.find_element_by_xpath(
 					'/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]').text[:-1])
 			if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]'):
-				self.hpE = int(driver.find_element_by_xpath(
-					'/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
+				self.hpE = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
 			try:
 				whatdo = driver.find_element_by_class_name('whatdo')
 				if "Switch" in whatdo.text:
@@ -191,7 +190,7 @@ class Engine:
 					driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(maxIndex+1)).click()
 					print(maxIndex)
 					score = self.getScore(driver, game)
-					ai.backward(score)
+					ai.backward(self.feats,50)
 					return
 			else:
 				if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)):
@@ -201,7 +200,7 @@ class Engine:
 					game['team'].pokemon[maxIndex-4] = temp
 					print(maxIndex)
 					score = self.getScore(driver, game)
-					ai.backward(score)
+					ai.backward(self.feats,50)
 					return
 	def getScore(self,driver,game):
 		if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]'):

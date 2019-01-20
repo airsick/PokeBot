@@ -204,9 +204,9 @@ class Engine:
 		if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]'):
 			oppNewHP = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
 		score = abs(game.gamestate['team'].pokemon[0].hp - myNewHP) - abs(game.gamestate['opponent'].pokemon[0].hp- oppNewHP)
-		print(score/100)
+		print(score)
 		print()
-		return score/100
+		return score
 if __name__ == '__main__':
 	bot = Engine()
 	bot.main()
