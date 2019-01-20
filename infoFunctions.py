@@ -5,7 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from team import Team
+from pokemon import Team
+from pokemon import gameData as game
 from pokemon import Pokemon
 
 def getTeamInfo(driver):
@@ -61,6 +62,7 @@ def getGameState(driver):
 	gamestate['team'] = getTeamInfo(driver)
 	gamestate['opponent'] = getOpponent(driver)
 	gamestate['team'].pokemon[0].moves = getMoves(driver)
+	game.teams=gamestate
 
 #def buildFeatures(gamestate):
 

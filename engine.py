@@ -5,9 +5,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
+from testing import run
 from infoFunctions import getTeamInfo, getGameState
 
-# 1: passive
+
 # 2: challenge
 # 3: matchmaking
 mode = 3
@@ -90,7 +91,6 @@ class Engine:
 				worked = True
 			except:
 				pass
-		#driver.find_element_by_name('challenge').click()
 		worked = False
 		while not worked:
 			try:
@@ -122,16 +122,15 @@ class Engine:
 			except:
 				pass
 		gamestate = getGameState(driver)
-		driver.find_element_by_xpath('//button[@name="chooseMove"][@value=1]').click()
+
 		while True:
-			inc = False
+
 			try:
 				whatdo = driver.find_element_by_class_name('whatdo')
-				
 				if "Switch" in whatdo.text:
-					self.choosePoke(driver)
+					self.choosePoke(driver, gamestate)
 				else:
-					self.chooseMove(driver)
+					self.chooseMove(driver, gamestate)
 			except:
 				pass
 			try:
@@ -140,12 +139,16 @@ class Engine:
 				return
 			except:
 				pass
-	def choosePoke(self, driver):
+	def choosePoke(self, driver, game):
+	#AI Forced switch Pokemon
+		action = run(game)
 		for i in range(6):
 			if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(i)):
 				driver.find_element_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(i)).click()
 				return
-	def chooseMove(self, driver):
+	def chooseMove(self, driver, game):
+	#AI Action
+		action = run(game)
 		for i in range(1,5):
 			if driver.find_elements_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)):
 				driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).click()
