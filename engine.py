@@ -25,6 +25,8 @@ class Engine:
 		else:
 			self.username = "BottyGurls"
 		pass
+		self.hp=100
+		self.hpE = 100
 
 	def main(self):
 		# enable browser logging
@@ -136,11 +138,6 @@ class Engine:
 
 		gamestate = getGameState(driver)
 		while True:
-			if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]'):
-				self.hp = int(driver.find_element_by_xpath(
-					'/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]').text[:-1])
-			if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]'):
-				self.hpE = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
 			try:
 				whatdo = driver.find_element_by_class_name('whatdo')
 				if "Switch" in whatdo.text:
@@ -190,7 +187,7 @@ class Engine:
 					driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(maxIndex+1)).click()
 					print(maxIndex)
 					score = self.getScore(driver, game)
-					ai.backward(self.feats,50)
+					ai.backward(self.feats,score)
 					return
 			else:
 				if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)):
@@ -200,14 +197,14 @@ class Engine:
 					game['team'].pokemon[maxIndex-4] = temp
 					print(maxIndex)
 					score = self.getScore(driver, game)
-					ai.backward(self.feats,50)
+					ai.backward(self.feats,score)
 					return
 	def getScore(self,driver,game):
 		if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]'):
 			myNewHP = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[1]/div/div[1][@class="hptext"]').text[:-1])
 		if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]'):
 			oppNewHP = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
-		score = abs(self.hp - myNewHP) - abs(self.hpE- oppNewHP)
+		score = abs(self.hpE- oppNewHP)-(self.hp - myNewHP) *100
 		print(score/100 + 1)
 		self.hp = myNewHP
 		self.hpE = oppNewHP
