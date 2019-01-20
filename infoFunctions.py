@@ -29,17 +29,18 @@ def getPoke(driver):
 	if elem.get_property("alt") != "M" and elem.get_property("alt") != "F":
 		poke.types.append(elem.get_property("alt"))
 
-	try:
+	if driver.find_elements_by_xpath('//div[@class="tooltip"]/h2/img[2]'):
 		elem = driver.find_element_by_xpath('//div[@class="tooltip"]/h2/img[2]')
 		poke.types.append(elem.get_property("alt"))
-	except:
-		pass
-
-	try:
+	if driver.find_elements_by_xpath('//div[@class="tooltip"]/h2/img[3]'):
 		elem = driver.find_element_by_xpath('//div[@class="tooltip"]/h2/img[3]')
 		poke.types.append(elem.get_property("alt"))
-	except:
-		pass
+		#test
+#	if driver.find_elements_by_xpath('//div[@class="tooltip"]/p'):
+#		elem = driver.find_elements_by_xpath('//div[@class="tooltip"]/p'+[1] ).text.split()[:-1]
+#		print(elem)
+#	print(driver.find_elements_by_xpath('//div[@class="tooltip"]/p'))
+#		poke.hp = elem
 	return poke
 
 def getOpponent(driver):
@@ -73,7 +74,7 @@ def getGameState(driver):
 def buildFeatures(driver, gamestate):
 	features = []
 	for i in range(6):
-	#for poke in gamestate['team'].pokemon:
+
 		for types in gamestate['team'].pokemon[i].types:
 			features.append(int(pokeTypes[types]))
 		if len(gamestate['team'].pokemon[i].types) < 2:
