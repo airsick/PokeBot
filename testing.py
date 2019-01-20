@@ -36,40 +36,33 @@ class Net(nn.Module):
 
     def num_flat_features(self, x):
         size = x.size()[1:]  # all dimensions except the batch dimension
-        num_features = 1
+        num_features = 9
         for s in size:
             num_features *= s
         return num_features
 
 def run(Pokemon):
+    print(Pokemon)
+    #return
     net = Net()
-    params = list(net.parameters())
+    params = Pokemon#list(net.parameters(Pokemon.gameData))
     print(len(params))
-    print(params[0].size())  # conv1's .weight
+    #print(params[0].size())  # conv1's .weight
 
     input = torch.randn(9, 24, 1, 1)
-    out = net(input)
+    output = net(input)
 
     net.zero_grad()
-    out.backward(torch.randn(9, 1))
+    output.backward(torch.randn(9, 1))
 
     output = net(input)
     target = torch.randn(9)  # a dummy target, for example
     target = target.view(1, -1)  # make it the same shape as output
     criterion = nn.MSELoss()
-
     loss = criterion(output, target)
     print(loss)
 
     net.zero_grad()     # zeroes the gradient buffers of all parameters
-
-    print('conv1.bias.grad before backward')
-    print(net.conv1.bias.grad)
-
-    loss.backward()
-
-    print('conv1.bias.grad after backward')
-    print(net.conv1.bias.grad)
 
     learning_rate = 0.01
     for f in net.parameters():
@@ -114,3 +107,4 @@ def run(Pokemon):
         if ret < i:
             ret = i
     return ret
+run([16, 0, 11, 16, 1, -1, 9, -1, 14, -1, 15, 5, 9, -1, 16, '95', 0, '130', 15, '110', 8, 0])

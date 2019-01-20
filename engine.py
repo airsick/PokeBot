@@ -5,12 +5,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from testing import run
-from infoFunctions import getTeamInfo, getGameState
+from infoFunctions import getTeamInfo, getGameState, buildFeatures
+from neural import NeuralNetwork
 
 
 # 2: challenge
-# 3: matchmaking
+# 3: matchmaking	
 mode = 3
 player = "BottyGurl"
 username = ""
@@ -31,13 +31,16 @@ class Engine:
 		self.login(driver)
 		if mode == 1:
 			while True:
-				self.acceptMatch(driver)
+				ai = NeuralNetwork()
+				self.acceptMatch(driver, ai)
 		elif mode == 2:
 			while True:
-				self.challengePlayer(driver, player)
+				ai = NeuralNetwork()
+				self.challengePlayer(driver, player, ai)
 		else:
 			while True:
-				self.randomMatch(driver)
+				ai = NeuralNetwork()
+				self.randomMatch(driver, ai)
 	def login(self, driver):
 		# load some site
 		driver.get('https://pokemonshowdown.com/')
@@ -60,7 +63,7 @@ class Engine:
 				pass
 		driver.find_element_by_name('username').send_keys(username)
 		driver.find_element_by_xpath("//button[@type='submit']").click()
-	def acceptMatch(self, driver):
+	def acceptMatch(self, driver, ai):
 		worked = False
 		while not worked:
 			try:
@@ -69,9 +72,9 @@ class Engine:
 			except:
 				pass
 		driver.find_element_by_name('acceptChallenge').click()
-		self.playGame(driver)
+		self.playGame(driver,ai)
 
-	def challengePlayer(self, driver, player):
+	def challengePlayer(self, driver, player, ai):
 		while not driver.find_elements_by_xpath('//span[@data-name=" '+username+'"]'):
 			pass
 		driver.find_element_by_name('finduser').click()
@@ -103,7 +106,7 @@ class Engine:
 
 
 
-	def randomMatch(self, driver):
+	def randomMatch(self, driver, ai):
 		worked = False
 		while not worked:
 			try:
@@ -112,8 +115,8 @@ class Engine:
 			except:
 				pass
 		driver.find_element_by_xpath('//button[@class="button mainmenu1 big"]').click()
-		self.playGame(driver)
-	def playGame(self, driver):
+		self.playGame(driver, ai)
+	def playGame(self, driver, ai):
 		worked = False
 		while not worked:
 			try:
@@ -128,9 +131,9 @@ class Engine:
 			try:
 				whatdo = driver.find_element_by_class_name('whatdo')
 				if "Switch" in whatdo.text:
-					self.choosePoke(driver, gamestate)
+					self.choosePoke(driver, gamestate, ai)
 				else:
-					self.chooseMove(driver, gamestate)
+					self.chooseMove(driver, gamestate, ai)
 			except:
 				pass
 			try:
@@ -139,20 +142,43 @@ class Engine:
 				return
 			except:
 				pass
-	def choosePoke(self, driver, game):
+	def choosePoke(self, driver, game, ai):
 	#AI Forced switch Pokemon
-		action = run(game)
-		for i in range(6):
-			if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(i)):
-				driver.find_element_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(i)).click()
-				return
-	def chooseMove(self, driver, game):
+		print('choose pokemain')
+		action = ai.forward(self.feats)
+		print(action)
+		while True:
+			maxIndex = action.argmax()
+			action[maxIndex] = -999999
+			if maxIndex >= 4:
+				if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)):
+					driver.find_element_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)).click()
+					temp = game['team'].pokemon[0]
+					game['team'].pokemon[0] = game['team'].pokemon[maxIndex-4]
+					game['team'].pokemon[maxIndex-4] = temp
+					print(maxIndex)
+					return
+	def chooseMove(self, driver, game, ai):
 	#AI Action
-		action = run(game)
-		for i in range(1,5):
-			if driver.find_elements_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)):
-				driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).click()
-				return
+		self.feats = buildFeatures(driver, game)
+		action = ai.forward(self.feats)
+		print(action)
+		while True:
+			maxIndex = action.argmax()
+			action[maxIndex] = -999999
+			if maxIndex < 4:
+				if driver.find_elements_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(maxIndex+1)):
+					driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(maxIndex+1)).click()
+					print(maxIndex)
+					return
+			else:
+				if driver.find_elements_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)):
+					driver.find_element_by_xpath('//button[@name="chooseSwitch"][@value={0}]'.format(maxIndex-3)).click()
+					temp = game['team'].pokemon[0]
+					game['team'].pokemon[0] = game['team'].pokemon[maxIndex-4]
+					game['team'].pokemon[maxIndex-4] = temp
+					print(maxIndex)
+					return
 
 if __name__ == '__main__':
 	bot = Engine()

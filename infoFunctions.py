@@ -6,8 +6,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
 from pokemon import Team
-from pokemon import gameData as game
+#from pokemon import gameData as game
 from pokemon import Pokemon
+from pokemon import pokeTypes
 
 def getTeamInfo(driver):
 	team = Team()
@@ -48,13 +49,17 @@ def getOpponent(driver):
 def getMoves(driver):
 	moves = []
 	for i in range(1,5):
-		moveName = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("data-move")
-		moveType = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("class")[5:]
-		ActionChains(driver).move_to_element(driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i))).perform()
-		movePower = driver.find_element_by_xpath('//div[@class="tooltip"]/p[1]').text.split()[-1]
-		if movePower == "—":
-			movePower = 0
-		moves.append({'name':moveName, 'type':moveType, 'power':movePower})
+		if  driver.find_elements_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)):
+			moveName = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("data-move")
+			moveType = driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i)).get_attribute("class")[5:]
+			ActionChains(driver).move_to_element(driver.find_element_by_xpath('//button[@name="chooseMove"][@value={0}]'.format(i))).perform()
+			movePower = driver.find_element_by_xpath('//div[@class="tooltip"]/p[1]').text.split()[-1]
+			if movePower == "—":
+				movePower = 0
+			moves.append({'name':moveName, 'type':moveType, 'power':movePower})
+	while len(moves) < 4:
+		print('adding')
+		moves.append({'name':0, 'type':"None",'power':-1})
 	return moves
 
 def getGameState(driver):
@@ -62,7 +67,26 @@ def getGameState(driver):
 	gamestate['team'] = getTeamInfo(driver)
 	gamestate['opponent'] = getOpponent(driver)
 	gamestate['team'].pokemon[0].moves = getMoves(driver)
-	game.teams=gamestate
+	#game.teams=gamestate
+	return gamestate
 
-#def buildFeatures(gamestate):
+def buildFeatures(driver, gamestate):
+	features = []
+	for i in range(6):
+	#for poke in gamestate['team'].pokemon:
+		for types in gamestate['team'].pokemon[i].types:
+			features.append(int(pokeTypes[types]))
+		if len(gamestate['team'].pokemon[i].types) < 2:
+			features.append(-1)
+
+	gamestate['opponent'] = getOpponent(driver)
+	for types in gamestate['opponent'].types:
+		features.append(int(pokeTypes[types]))
+	if len(gamestate['opponent'].types) < 2:
+		features.append(-1)
+	moves = getMoves(driver)
+	for move in moves:
+		features.append(int(pokeTypes[move['type']]))
+		features.append(int(move['power']))
+	return features
 
