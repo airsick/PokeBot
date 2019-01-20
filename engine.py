@@ -205,10 +205,10 @@ class Engine:
 		if driver.find_elements_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]'):
 			oppNewHP = int(driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div[6]/div[2]/div/div[1][@class="hptext"]').text[:-1])
 		score = abs(self.hpE- oppNewHP)-(self.hp - myNewHP) *100
-		print(score/100 + 1)
+		print(score)
 		self.hp = myNewHP
 		self.hpE = oppNewHP
-		return score/100 +1
+		return score
 if __name__ == '__main__':
 	bot = Engine()
 	bot.main()
